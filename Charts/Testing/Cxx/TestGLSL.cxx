@@ -90,7 +90,7 @@ public:
 };
 
 //----------------------------------------------------------------------------
-int TestGLSL( int argc, char * argv [] )
+int TestGLSL( int, char * [] )
 {
   // Set up a 2D context view, context test object and add it to the scene
   VTK_CREATE(vtkContextView, view);
@@ -101,23 +101,18 @@ int TestGLSL( int argc, char * argv [] )
 
   // Ensure that there is a valid OpenGL context - Mac inconsistent behavior.
   view->GetRenderWindow()->SetMultiSamples(0);
-
-  int retVal = vtkRegressionTestImage(view->GetRenderWindow());
-  if(retVal == vtkRegressionTester::DO_INTERACTOR)
-    {
-    view->GetInteractor()->Initialize();
-    view->GetInteractor()->Start();
-    }
+  // Need to attempt at least one render, to see if the GLSL can compile.
+  view->Render();
 
   if (test->IsCompiled)
     {
-    return !retVal;
+    view->GetInteractor()->Start();
     }
   else
     {
     cout << "GLSL 1.20 required, shader failed to compile." << endl;
-    return 0;
     }
+  return EXIT_SUCCESS;
 }
 
 // Make our new derived class to draw a diagram

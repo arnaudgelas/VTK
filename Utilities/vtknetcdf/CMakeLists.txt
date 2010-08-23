@@ -260,6 +260,32 @@ SET(WORDS_BIGENDIAN ${CMAKE_WORDS_BIGENDIAN})
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/ncconfig.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/ncconfig.h @ONLY IMMEDIATE)
 
+#-----------------------------------------------------------------------------
+# Option to allow the user to disable compiler warnings
+#-----------------------------------------------------------------------------
+OPTION (NETCDF_DISABLE_COMPILER_WARNINGS "Disable compiler warnings" ON)
+MARK_AS_ADVANCED(NETCDF_DISABLE_COMPILER_WARNINGS)
+IF (NETCDF_DISABLE_COMPILER_WARNINGS)
+  # MSVC uses /w to suppress warnings.  It also complains if another
+  # warning level is given, so remove it.
+  IF (MSVC)
+    STRING (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " "
+        CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+    STRING (REGEX REPLACE "(^| )([/-])W[0-9]( |$)" " "
+        CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /w")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w")
+  # Borland uses -w- to suppress warnings.
+  ELSEIF (BORLAND)
+    SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w-")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -w-")
+  ELSE ()
+  # Most compilers use -w to suppress warnings.
+    SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -w")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -w")
+  ENDIF ()
+ENDIF (NETCDF_DISABLE_COMPILER_WARNINGS)
+
 ADD_LIBRARY(vtkNetCDF
   ${netcdf_SRCS})
 
@@ -281,7 +307,7 @@ IF(NOT VTK_INSTALL_NO_LIBRARIES)
   IF(NOT VTK_INSTALL_LIB_DIR_CM24)
     SET(VTK_INSTALL_LIB_DIR_CM24 ${CMAKE_INSTALL_PREFIX}/lib)
   ENDIF(NOT VTK_INSTALL_LIB_DIR_CM24)
-  INSTALL(TARGETS vtkNetCDF
+  INSTALL(TARGETS vtkNetCDF vtkNetCDF_cxx
     RUNTIME DESTINATION ${VTK_INSTALL_BIN_DIR_CM24} COMPONENT RuntimeLibraries
     LIBRARY DESTINATION ${VTK_INSTALL_LIB_DIR_CM24} COMPONENT RuntimeLibraries
     ARCHIVE DESTINATION ${VTK_INSTALL_LIB_DIR_CM24} COMPONENT Development)

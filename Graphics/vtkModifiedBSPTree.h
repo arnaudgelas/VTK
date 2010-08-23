@@ -151,7 +151,7 @@ class vtkIdList;
 class vtkIdListCollection;
 //ETX
 
-class VTK_FILTERING_EXPORT vtkModifiedBSPTree : public vtkAbstractCellLocator {
+class VTK_GRAPHICS_EXPORT vtkModifiedBSPTree : public vtkAbstractCellLocator {
   public:
   // Description:
   // Standard Type-Macro
@@ -204,7 +204,7 @@ class VTK_FILTERING_EXPORT vtkModifiedBSPTree : public vtkAbstractCellLocator {
   // Return intersection point (if any) AND the cell which was intersected by
   // the finite line. The cell is returned as a cell id and as a generic cell.
   virtual int IntersectWithLine(
-    double p1[3], double p2[3], double tol, double &t, double x[3], 
+    double p1[3], double p2[3], double tol, double &t, double x[3],
     double pcoords[3], int &subId, vtkIdType &cellId, vtkGenericCell *cell);
 
   // Description:
@@ -221,21 +221,21 @@ class VTK_FILTERING_EXPORT vtkModifiedBSPTree : public vtkAbstractCellLocator {
   virtual int IntersectWithLine(
     const double p1[3], const double p2[3],
     vtkPoints *points, vtkIdList *cellIds)
-    { return this->Superclass::IntersectWithLine(p1, p2, points, cellIds); }  
-  
+    { return this->Superclass::IntersectWithLine(p1, p2, points, cellIds); }
+
   // Description:
   // Take the passed line segment and intersect it with the data set.
   // The return value of the function is 0 if no intersections were found.
   // For each intersection found, the vtkPoints and CellIds objects
   // have the relevant information added in order of intersection increasing
-  // from ray start to end. If either vtkPoints or CellIds are NULL 
+  // from ray start to end. If either vtkPoints or CellIds are NULL
   // pointers, then no information is generated for that list.
   virtual int IntersectWithLine(
     const double p1[3], const double p2[3], const double tol,
     vtkPoints *points, vtkIdList *cellIds);
 
   // Description:
-  // Returns the Id of the cell containing the point, 
+  // Returns the Id of the cell containing the point,
   // returns -1 if no cell found. This interface uses a tolerance of zero
   virtual vtkIdType FindCell(double x[3])
     { return this->Superclass::FindCell(x); }
@@ -243,7 +243,7 @@ class VTK_FILTERING_EXPORT vtkModifiedBSPTree : public vtkAbstractCellLocator {
   // Description:
   // Test a point to find if it is inside a cell. Returns the cellId if inside
   // or -1 if not.
-  virtual vtkIdType FindCell(double x[3], double tol2, vtkGenericCell *GenCell, 
+  virtual vtkIdType FindCell(double x[3], double tol2, vtkGenericCell *GenCell,
     double pcoords[3], double *weights);
 
   bool InsideCellBounds(double x[3], vtkIdType cell_ID);
@@ -273,7 +273,7 @@ class VTK_FILTERING_EXPORT vtkModifiedBSPTree : public vtkAbstractCellLocator {
   // it can be overriden by subclasses to perform special treatment
   // (Example : Particles stored in tree, have no dimension, so we must
   // override the cell test to return a value based on some particle size
-  virtual int IntersectCellInternal(vtkIdType cell_ID, const double p1[3], const double p2[3], 
+  virtual int IntersectCellInternal(vtkIdType cell_ID, const double p1[3], const double p2[3],
     const double tol, double &t, double ipt[3], double pcoords[3], int &subId);
 
 //ETX
@@ -330,18 +330,18 @@ class BSPNode {
     // 6 lists, sorted after the 6 dominant axes
     vtkIdType *sorted_cell_lists[6];
     // Order nodes as near/mid far relative to ray
-    void Classify(const double origin[3], const double dir[3], 
+    void Classify(const double origin[3], const double dir[3],
       double &rDist, BSPNode *&Near, BSPNode *&Mid, BSPNode *&Far) const;
     // Test ray against node BBox : clip t values to extremes
-    bool RayMinMaxT(const double origin[3], const double dir[3], 
+    bool RayMinMaxT(const double origin[3], const double dir[3],
       double &rTmin, double &rTmax) const;
     //
     friend class vtkModifiedBSPTree;
     friend class vtkParticleBoxTree;
   public:
-  static bool VTK_FILTERING_EXPORT RayMinMaxT(
+  static bool VTK_GRAPHICS_EXPORT RayMinMaxT(
     const double bounds[6], const double origin[3], const double dir[3], double &rTmin, double &rTmax);
-  static int  VTK_FILTERING_EXPORT getDominantAxis(const double dir[3]);
+  static int  VTK_GRAPHICS_EXPORT getDominantAxis(const double dir[3]);
 };
 
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
@@ -349,5 +349,3 @@ class BSPNode {
 //ETX
 
 #endif
-
-
